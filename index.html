@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
+  <title>BINARY SECRET</title>
+  <style>
+    :root { color-scheme: dark; --gold:#d6ad55; --bg:#101010; --panel:#191919; --muted:#aaa; }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; min-height:100vh; padding:28px 16px;
+      background:radial-gradient(ellipse at top, #292318 0%, #101010 48%);
+      color:#f4f0e7; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    main { width:min(100%,680px); margin:0 auto; }
+    header { text-align:center; margin:20px 0 30px; }
+    h1 { color:var(--gold); letter-spacing:.16em; font-size:clamp(27px,7vw,42px); margin:0 0 9px; }
+    .subtitle { color:var(--muted); letter-spacing:.2em; font-size:11px; }
+    .panel { background:rgba(25,25,25,.96); border:1px solid #39332a; border-radius:18px; padding:20px; box-shadow:0 16px 50px #0006; }
+    .tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:20px; }
+    button, .tab {
+      border:1px solid #51452e; border-radius:10px; background:#24211b; color:#e9dfc9;
+      padding:13px 15px; font-size:15px; cursor:pointer;
+    }
+    .tab.active, .primary { background:var(--gold); color:#17130b; border-color:var(--gold); font-weight:700; }
+    label { display:block; margin:16px 0 8px; color:#d8cba9; font-size:13px; }
+    textarea, input {
+      width:100%; border:1px solid #48433a; border-radius:10px; background:#101010; color:#fff;
+      padding:13px; font:inherit; outline:none;
+    }
+    textarea { min-height:130px; resize:vertical; line-height:1.55; }
+    textarea:focus, input:focus { border-color:var(--gold); }
+    .primary { width:100%; margin-top:18px; }
+    .result-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:22px; }
+    .result-head label { margin:0; }
+    .small { padding:8px 11px; font-size:12px; }
+    #result { min-height:100px; overflow-wrap:anywhere; font-family:ui-monospace,monospace; font-size:14px; }
+    .actions { display:flex; gap:8px; margin-top:10px; }
+    .actions button { flex:1; }
+    .note { color:var(--muted); font-size:12px; line-height:1.65; margin:18px 2px 0; }
+    #status { min-height:20px; color:var(--gold); font-size:12px; margin-top:10px; }
+    footer { color:#777; text-align:center; font-size:11px; margin:22px 0; }
+    @media (max-width:420px) { .panel { padding:16px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>BINARY SECRET</h1>
+    <div class="subtitle">YOUR PRIVATE MESSAGE ENCODER</div>
+  </header>
+  <section class="panel">
+    <div class="tabs" role="tablist" aria-label="処理モード">
+      <button class="tab active" id="encryptTab" type="button">暗号化</button>
+      <button class="tab" id="decryptTab" type="button">復号</button>
+    </div>
+
+    <label id="inputLabel" for="message">文章を入力</label>
+    <textarea id="message" placeholder="秘密の文章を入力..."></textarea>
+
+    <label for="password">パスワード</label>
+    <input id="password" type="password" autocomplete="off" placeholder="自分で決めたパスワード">
+
+    <button class="primary" id="runButton" type="button">暗号化する</button>
+
+    <div class="result-head">
+      <label for="result" id="resultLabel">暗号文</label>
+      <button class="small" id="copyButton" type="button">コピー</button>
+    </div>
+    <textarea id="result" readonly placeholder="処理結果がここに表示されます..."></textarea>
+    <div class="actions">
+      <button id="downloadButton" type="button">テキスト保存</button>
+      <button id="clearButton" type="button">クリア</button>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+  </section>
+  <p class="note">
+    このページは入力内容やパスワードをサーバーへ送信せず、ブラウザ内で処理します。
+    BINARY SECRETは学習用の独自方式（XOR＋ビット反転）です。強固な暗号ではないため、
+    本当に重要な情報や他人に知られて困る情報には使用しないでください。
+  </p>
+  <footer> BINARY SECRET · WEB EDITION </footer>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  let mode = "encrypt";
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder("utf-8", { fatal: true });
+
+  function reverseBits(value) {
+    let out = 0;
+    for (let i = 0; i < 8; i++) {
+      out = (out << 1) | (value & 1);
+      value >>= 1;
+    }
+    return out;
+  }
+
+  function encrypt(plain, password) {
+    const data = encoder.encode(plain);
+    const key = encoder.encode(password);
+    if (!key.length) throw new Error("パスワードを入力してください。");
+    const transformed = data.map((byte, i) => reverseBits(byte ^ key[i % key.length]));
+    const hex = Array.from(transformed, b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+    return "BS1" + hex;
+  }
+
+  function decrypt(cipher, password) {
+    const key = encoder.encode(password);
+    if (!key.length) throw new Error("パスワードを入力してください。");
+    const normalized = cipher.trim();
+    if (!normalized.startsWith("BS1")) throw new Error("暗号文の形式が違います（BS1で始まる必要があります）。");
+    const hex = normalized.slice(3);
+    if (hex.length % 2 !== 0 || !/^[0-9a-fA-F]*$/.test(hex)) throw new Error("暗号文に不正な文字が含まれています。");
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      const encodedByte = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+      bytes[i] = reverseBits(encodedByte) ^ key[i % key.length];
+    }
+    try { return decoder.decode(bytes); }
+    catch { throw new Error("復号できません。パスワードが違うか、暗号文が壊れています。"); }
+  }
+
+  function setMode(next) {
+    mode = next;
+    $("encryptTab").classList.toggle("active", mode === "encrypt");
+    $("decryptTab").classList.toggle("active", mode === "decrypt");
+    $("inputLabel").textContent = mode === "encrypt" ? "文章を入力" : "暗号文を入力";
+    $("message").placeholder = mode === "encrypt" ? "秘密の文章を入力..." : "BS1から始まる暗号文を入力...";
+    $("runButton").textContent = mode === "encrypt" ? "暗号化する" : "復号する";
+    $("resultLabel").textContent = mode === "encrypt" ? "暗号文" : "復号した文章";
+    $("status").textContent = "";
+  }
+
+  $("encryptTab").addEventListener("click", () => setMode("encrypt"));
+  $("decryptTab").addEventListener("click", () => setMode("decrypt"));
+  $("runButton").addEventListener("click", () => {
+    try {
+      const input = $("message").value;
+      if (!input.trim()) throw new Error("文章を入力してください。");
+      const password = $("password").value;
+      $("result").value = mode === "encrypt" ? encrypt(input, password) : decrypt(input, password);
+      $("status").textContent = mode === "encrypt" ? "暗号化しました。" : "復号しました。";
+    } catch (error) {
+      $("status").textContent = error.message;
+      $("result").value = "";
+    }
+  });
+  $("copyButton").addEventListener("click", async () => {
+    if (!$("result").value) { $("status").textContent = "コピーする内容がありません。"; return; }
+    try {
+      await navigator.clipboard.writeText($("result").value);
+      $("status").textContent = "コピーしました。";
+    } catch {
+      $("result").select();
+      $("status").textContent = "結果を選択しました。長押ししてコピーしてください。";
+    }
+  });
+  $("downloadButton").addEventListener("click", () => {
+    if (!$("result").value) { $("status").textContent = "保存する内容がありません。"; return; }
+    const blob = new Blob([$("result").value], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = mode === "encrypt" ? "binary-secret.txt" : "decrypted-message.txt";
+    a.click(); URL.revokeObjectURL(url);
+    $("status").textContent = "保存を開始しました。";
+  });
+  $("clearButton").addEventListener("click", () => {
+    $("message").value = ""; $("password").value = ""; $("result").value = ""; $("status").textContent = "";
+  });
+})();
+</script>
+</body>
+</html>
