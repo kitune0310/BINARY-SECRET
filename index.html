@@ -77,6 +77,10 @@
     <label id="inputLabel" for="message">文章を入力</label>
     <textarea id="message" placeholder="秘密の文章を入力..."></textarea>
 
+    <button onclick="readMessage()">
+      入力内容を確認
+    </button>
+
     <label for="password">パスワード</label>
     <input id="password" type="password" autocomplete="off" placeholder="自分で決めたパスワード">
 
@@ -195,6 +199,12 @@
   function changeText() {
     document.getElementById("output").textContent =
       "BINARY SECRETへようこそ！";
+  }
+
+  function readMessage() {
+    const message = document.getElementById("message").value;
+
+    alert("入力した文章:" + message);
   }
 </script>
 </body>
