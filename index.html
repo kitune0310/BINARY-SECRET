@@ -60,6 +60,9 @@
     <div class="subtitle">MY OWN SECRET SYSTEM</div>
     <p class="description">秘密を守るための自分専用ツール</p>
   </header>
+  <button onclick="showMessage()">
+    テストボタン
+  </button>
   <section class="panel">
     <div class="tabs" role="tablist" aria-label="処理モード">
       <button class="tab active" id="encryptTab" type="button">暗号化</button>
@@ -181,6 +184,9 @@
     $("message").value = ""; $("password").value = ""; $("result").value = ""; $("status").textContent = "";
   });
 })();
+  function showMessage() {
+    alert("JavaScriptが動いた！");
+  }
 </script>
 </body>
 </html>
