@@ -62,6 +62,11 @@
   </header>
   <button onclick="showMessage()">
     テストボタン
+    <p id="output">ここが変わるよ！</p>
+
+    <button onclick="changeText()">
+      文字を変更
+      </button>
   </button>
   <section class="panel">
     <div class="tabs" role="tablist" aria-label="処理モード">
@@ -186,6 +191,10 @@
 })();
   function showMessage() {
     alert("JavaScriptが動いた！");
+  }
+  function changeText() {
+    document.getElementById("output").textContent =
+      "BINARY SECRETへとうこそ！";
   }
 </script>
 </body>
