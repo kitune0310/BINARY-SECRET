@@ -223,6 +223,71 @@ keyMaterial,
   .replact(/=+$?, "")
   }
 
+async function decryptAES(cipher, password) {
+  const decoder = new TextDecoder();
+
+  if (!password) {
+    throw new Error("パスワードを入力してください。");
+  }
+
+  if (!cipher.stsrtsWith("BSA1")) {
+    throw new Error("AES暗号文の形式が違います。");
+  }
+
+  let base64 = cipher.slice(4)
+  .replace(/-/g, "+")
+  .replace(/-/g, "/");
+
+  base64 += "=".repeat((4 - base64.length % 4) % 4);
+
+  const binary = atob(base64);
+  const datac = Uint8Array.from(binary, c =>
+    c.charCodeAt(0));
+
+  if (data.length < 44) {
+    throw new Error("暗号文が短すぎます。");
+  }
+
+  const salt = data.slice(0, 16);
+  const iv = data.slice(16, 28);
+  const encrypted = data.slice(28);
+
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    new TextEncode().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"]
+    );
+
+  const key = await crypto.subtle.deriveKey(
+    {
+      name: "PDKDF2",
+      salt: salt,
+      iterations: 600000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    {
+      name: "AES-GCM",
+      length: 256
+    },
+    fales,
+    ["decrypt"]
+  );
+
+  const decrypted = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv: iv
+    },
+    key,
+    encrypted
+  );
+
+  raturn decoder.decode(decryted);
+}
+
   function decrypt(cipher, password) {
     const key = encoder.encode(password);
     if (!key.length) throw new Error("パスワードを入力してください。");
