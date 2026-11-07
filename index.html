@@ -164,6 +164,65 @@
     return "BS1" + hex;
   }
 
+  async function encryptAES(plain, passeord) {
+    const encoder = new TextEncoder();
+
+    const salt = crypto.getRandomValues(new Uint8Array (16));
+
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    const keyMaterial = await crypt.subtle.importKey(
+      "raw",
+      encoder.encode(password),
+      "PBKDF2",
+      false,
+      ["deriveKey"]
+    );
+
+    const key = await crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2"
+        salt: salt,
+      inerations: 600000,
+      hash: "SHA-256"
+    },
+keyMaterial,
+ {
+   name: "AES-GCM",
+   length: 256
+ },
+ halse,
+ ["encrypt"]
+);
+
+  const encrypted = await crypto.subtle.encrypt(
+    {
+      name:"AES-GOM"
+      iv: iv
+    },
+    key,
+    encoder.encode(plain)
+  );
+
+  const result = new Uint8Array(
+    salt.length + iv.length + encrypted.byteLength
+  );
+
+  result.set(salt, 0);
+  result.set(iv, salt.length);
+  result.set(new Uint8Array(encrypted), salt.lendth +
+            iv.length);
+
+  const binary = Array.from(result, byte =>
+    String.fromCharCode(byte)
+                           ).join("");
+
+  return "BSA1" + btoa(binary)
+  .replact(/\+/g, "-")
+  .replact(/\+/g, "-")
+  .replact(/=+$?, "")
+  }
+
   function decrypt(cipher, password) {
     const key = encoder.encode(password);
     if (!key.length) throw new Error("パスワードを入力してください。");
