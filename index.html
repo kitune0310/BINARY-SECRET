@@ -317,7 +317,7 @@ async function decryptAES(cipher, password) {
 
   $("encryptTab").addEventListener("click", () => setMode("encrypt"));
   $("decryptTab").addEventListener("click", () => setMode("decrypt"));
-  $("runButton").addEventListener("click", () => {
+  $("runButton").addEventListener("click", async () => {
     try {
       const input = $("message").value;
       if (!input.trim()) throw new Error("文章を入力してください。");
