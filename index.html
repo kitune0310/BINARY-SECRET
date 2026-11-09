@@ -183,13 +183,13 @@
    if (!password) throw new Error("パスワードを入力してください。")
 
    const encoder = new TextEncoder();
-   const salt = crypto.getRandomValues(new Unit8Array(16));
+   const salt = crypto.getRandomValues(new Uint8Array(16));
    const iv = crypto.getRandomValues(new Uint8Array(12));
 
    const keyMaterial = await crypto.subtle.importKey(
      "raw",
      encoder.encode(password),
-     "PBKDF2"
+     "PBKDF2",
      false,
      ["deriveKey"]
    );
@@ -203,7 +203,7 @@
      },
      keyMaterial,
      { name: "AES-GCM", length: 256 },
-     fales,
+     false,
      ["encrypt"]
    );
 
@@ -213,7 +213,7 @@
      encoder.encode(plain)
    );
 
-   constresult = new Uint8Array(
+   const result = new Uint8Array(
      salt.length + iv.length + encrypted.byteLength
    );
 
@@ -232,14 +232,14 @@
  }
 
   async function decryptAES(cipher, password) {
-    if (!passwode) throw new Error("パスワードを入力してください。");
-    if (!cipher.stsrtsWith("BSA1")) {
+    if (!password) throw new Error("パスワードを入力してください。");
+    if (!cipher.startsWith("BSA1")) {
       throw new Error("AES暗号文の形式が違います。");
     }
 
     const base64 = cipher.slice(4)
     .replace(/-/g, "+")
-    .replace(/-/d, "/");
+    .replace(/-/g, "/");
 
     const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
 
