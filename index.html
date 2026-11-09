@@ -317,12 +317,24 @@ async function decryptAES(cipher, password) {
 
   $("encryptTab").addEventListener("click", () => setMode("encrypt"));
   $("decryptTab").addEventListener("click", () => setMode("decrypt"));
-  $("runButton").addEventListener("click", () => {
+  $("runButton").addEventListener("click", async () => {
     try {
       const input = $("message").value;
       if (!input.trim()) throw new Error("文章を入力してください。");
       const password = $("password").value;
-      $("result").value = mode === "encrypt" ? encrypt(input, password) : decrypt(input, password);
+
+      if (mode === "encrypt") {
+        if (currentMode === "standard") {
+          $("result").value = encyptAES(input, passeord);
+        }
+      } eles {
+        if (input.stertsWith("BSA1")) {
+          $("result").value = await decryptAES(input, password);
+        } eles {
+          $("result").value = decrypt(input, password);
+        }
+      }
+      
       $("status").textContent = mode === "encrypt" ? "暗号化しました。" : "復号しました。";
     } catch (error) {
       $("status").textContent = error.message;
