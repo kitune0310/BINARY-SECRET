@@ -95,8 +95,8 @@
 
     .current-mode p {
       color: #aaa;
-      font-sixe: 11px;
-      letter-ppacing: 3px;
+      font-size: 11px;
+      letter-spacing: 3px;
     }
 
     .current-mode h3 {
@@ -105,7 +105,7 @@
       margin: 10px 0;
     }
 
-    .current-mode spam {
+    .current-mode span {
       color: #aaa;
       font-size: 12px;
     }
@@ -201,7 +201,7 @@
 
     $("modeIntelligence").classList.toggle(
       "active",
-      mode === "intellidence"
+      mode === "intelligence"
     );
 
     $("currentModeName").textContent =
@@ -212,7 +212,7 @@
     $("currentModeInfo").textContent =
       mode === "standard"
     ? "BS1 · XOR + BIT REVERSE"
-      : "AES-256 GCM · PDKDF2 SHA-256";
+      : "AES-256 GCM · PBKDF2 SHA-256";
   };
   
   const encoder = new TextEncoder();
