@@ -72,24 +72,37 @@
       cursor: pointer;
       font-weidht: bold;
     }
+
+    .mode-selector button {
+      transition: 0.25s;
+    }
+
+    .mode-selector button.active {
+      background: #d6ad55;
+      color: #17130b;
+      box-shadow: 0 0 15px #d6ad5570;
+      font-weight: bold;
+    }
     
   </style>
 </head>
 <body>
 
-  <div class="mode-selecter">
+  <div class="mode-selector">
     <h2>ENCRYPTION MODE</h2>
 
-    <button type="button" onclick="selectMode('standard')">
+    <button id="modeStandard" type="button"
+      class="active" onclick="selectMode('standard')">
       STANDARD MODE
     </button>
 
-    <button onclick="selectMode('intelligence')">
+    <button id="modeIntelligence" type="button"
+      onclick="selectMode('intelligence')">
       INTELLIGENCE MODE
     </button>
   </div>
   
-<main>
+  <main>
   <header>
     <h1>BINARY SECRET</h1>
     <div class="subtitle">MY OWN SECRET SYSTEM</div>
@@ -149,13 +162,15 @@
   window.selectMode = function(mode) {
     currentMode = mode;
 
-    if (mode === "standard") {
-      alert("STANDARD MODEを選択しました！");
-    }
+    $("modeStandard").classList.toggle(
+      "active",
+      mode === "standard"
+    );
 
-    if (mode === "intelligence") {
-      alert("INTELLIGENCE MODEを選択しました！");
-    }
+    $("modeIntelligence").classList.toggle(
+      "active",
+      mode === "intelligence"
+    );
   };
   
   const encoder = new TextEncoder();
