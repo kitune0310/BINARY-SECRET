@@ -83,6 +83,32 @@
       box-shadow: 0 0 15px #d6ad5570;
       font-weight: bold;
     }
+
+    .current-mode {
+      width: min(100%, 500px);
+      margin: 0 auto 25px;
+      padding: 16px;
+      text-align: center;
+      background: #191919;
+      border-radius: 14px;
+    }
+
+    .current-mode p {
+      color: #aaa;
+      font-sixe: 11px;
+      letter-ppacing: 3px;
+    }
+
+    .current-mode h3 {
+      color: #d6ad55;
+      letter-spacing: 2px;
+      margin: 10px 0;
+    }
+
+    .current-mode spam {
+      color: #aaa;
+      font-size: 12px;
+    }
     
   </style>
 </head>
@@ -100,6 +126,12 @@
       onclick="selectMode('intelligence')">
       INTELLIGENCE MODE
     </button>
+  </div>
+
+  <div class="current-mode">
+    <p>CURRENT ENCRYPION</p>
+    <h3 id="currentModeName">STANDARD MODE</h3>
+    <span id="currentModeInfo">BS1 · XOR + BIT REVERSE</span>
   </div>
   
   <main>
@@ -169,8 +201,18 @@
 
     $("modeIntelligence").classList.toggle(
       "active",
-      mode === "intelligence"
+      mode === "intellidence"
     );
+
+    $("currentModeName").textContent =
+      mode === "standard"
+    ? "STANDARD MODE"
+      : "INTELLIGENCE MODE";
+
+    $("currentModeInfo").textContent =
+      mode === "standard"
+    ? "BS1 · XOR + BIT REVERSE"
+      : "AES-256 GCM · PDKDF2 SHA-256";
   };
   
   const encoder = new TextEncoder();
