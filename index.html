@@ -109,6 +109,13 @@
       color: #aaa;
       font-size: 12px;
     }
+
+    .mode-description {
+      margin-top: 14px;
+      color: #aaa;
+      font-size: 13px;
+      line-height: 1.8;
+    }
     
   </style>
 </head>
@@ -130,8 +137,16 @@
 
   <div class="current-mode">
     <p>CURRENT ENCRYPION</p>
+    
     <h3 id="currentModeName">STANDARD MODE</h3>
-    <span id="currentModeInfo">BS1 · XOR + BIT REVERSE</span>
+    
+    <span id="currentModeInfo">
+      BS1 · XOR + BIT REVERSE
+    </span>
+
+    <p id="currentModeDescription" class="mode-description">
+      XORとビット反転を組み合わせた学習用の独自暗号方法です。
+    </p>
   </div>
   
   <main>
