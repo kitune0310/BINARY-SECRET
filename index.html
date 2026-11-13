@@ -140,14 +140,7 @@
     <div class="subtitle">MY OWN SECRET SYSTEM</div>
     <p class="description">秘密を守るための自分専用ツール</p>
   </header>
-  <button onclick="showMessage()">
-    テストボタン
-    <p id="output">ここが変わるよ！</p>
-
-    <button onclick="changeText()">
-      文字を変更
-      </button>
-  </button>
+    
   <section class="panel">
     <div class="tabs" role="tablist" aria-label="処理モード">
       <button class="tab active" id="encryptTab" type="button">暗号化</button>
@@ -434,24 +427,8 @@
     $("message").value = ""; $("password").value = ""; $("result").value = ""; $("status").textContent = "";
   });
 })();
-  function showMessage() {
-    alert("JavaScriptが動いた！");
-  }
-  function changeText() {
-    document.getElementById("output").textContent =
-      "BINARY SECRETへようこそ！";
-  }
 
-  function readMessage() {
-    const message = document.getElementById("message").value;
-
-    alert("入力した文章:" + message);
-  }
-
-  function encryptText() {
-    alert("暗号化を開始します！");
-  }
-
+  
   
 </script>
 </body>
