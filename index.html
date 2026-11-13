@@ -170,11 +170,19 @@
     </div>
     <div id="status" role="status" aria-live="polite"></div>
   </section>
-  <p class="note">
-    このページは入力内容やパスワードをサーバーへ送信せず、ブラウザ内で処理します。
-    BINARY SECRETは学習用の独自方式（XOR＋ビット反転）です。強固な暗号ではないため、
-    本当に重要な情報や他人に知られて困る情報には使用しないでください。
-  </p>
+
+    
+<p class="note">
+  このページは入力内容やパスワードをサーバーへ送信せず、ブラウザ内で処理します。
+
+  STANDARD MODEは、XORとビット反転を組み合わせた学習用の独自方式です。
+  強固な暗号ではありません。
+
+  INTELLIGENCE MODEは、AES-256-GCMとPBKDF2 SHA-256を使用します。
+  ただし、このアプリは学習用の実装であり、重要な情報の保護を保証するものではありません。
+</p>
+
+  
   <footer> BINARY SECRET · WEB EDITION </footer>
 </main>
 <script>
